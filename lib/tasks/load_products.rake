@@ -1,6 +1,8 @@
 namespace :spree_elasticsearch do
   desc "Load all products into the index."
   task :load_products => :environment do
+    Elasticsearch::Model.client = Elasticsearch::Client.new log: true, hosts: Spree::ElasticsearchSettings.hosts
+
     if Elasticsearch::Model.client.indices.exists index: Spree::ElasticsearchSettings.index
       Spree::Product.__elasticsearch__.import
       puts "Products successfully loaded into Elasticsearch indices."
