@@ -1,6 +1,7 @@
 namespace :spree_elasticsearch do
   desc "Delete any existing indices and create all from scratch."
   task :setup_indices => :environment do
+    Elasticsearch::Model.client = Elasticsearch::Client.new log: true, hosts: Spree::ElasticsearchSettings.hosts
 
     # delete only our index, if it exists
     puts "Attempting to delete index: #{Spree::ElasticsearchSettings.index}"
@@ -14,7 +15,7 @@ namespace :spree_elasticsearch do
       body: {
         settings: Spree::Product.settings.to_hash,
         mappings: Spree::Product.mappings.to_hash }
-    
+
     puts "Elasticsearch indices created successfully. Please run 'rake spree_elasticsearch:load_products' to load your products into the index."
   end
 end
